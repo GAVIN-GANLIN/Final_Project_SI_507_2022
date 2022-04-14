@@ -1,4 +1,4 @@
-#                                                         Final_Project_SI_507_2022
+#                                                                   Final_Project_SI_507_2022
 
 # Food recommendation app reflects insights of local racial segregation and urban consumption level (Yelp + Google Map + U.S. Census API)
 
