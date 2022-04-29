@@ -49,9 +49,9 @@ Read the contents in the link above. scroll down to bottom and click the 'Reques
 
 Once you finish the set up and successflly get all your new personal api keys, please replace the three key variables in the code (see below) with your own keys. 
 
-Yelp_key = <your key> <br />
-Google_Map_API_Key = <your key> <br />
-Census_Api_Code = <your key> <br />
+Yelp_key = 'your key' <br />
+Google_Map_API_Key = 'your key' <br />
+Census_Api_Code = 'your key' <br />
 
 ## Interaction with the code
   As for Yelp Fusion. three parameters you need to input: catgories of location you want to search (e.g. Museum); narrow down the search region to a city(e.g. New York); offset value which means how many results you want to get(should be multiple of 50 and not exceed 1000)<br />
