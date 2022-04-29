@@ -13,9 +13,6 @@ import plotly.graph_objects as go
 import plotly.figure_factory as ff
 import geopandas as gd # pip install geopandas
 import googlemaps #pip install googlemaps
-from bokeh.models import GMapOptions
-from bokeh.plotting import gmap
-from bokeh.io import show
 import os
 import gmplot
 import ast
@@ -723,8 +720,8 @@ if __name__=="__main__":
            print('-' * 80)
            print('-------------------------Data preparing----------------------')
        else:
-            key = input("Please input your interest type of location in to Yelp: ")
-            city = input("Please narrow down the city you interest in the USA: ")
+            key = input("Please input location you are interested in to Yelp: ")
+            city = input("Please narrow down the city you are interested in the USA: ")
             offset = input('Please specify how many results you want to get (should be multiply of 50 and no exceeding 1000: ')
             print('-'* 80)
             print('-------------------------Data preparing----------------------')
