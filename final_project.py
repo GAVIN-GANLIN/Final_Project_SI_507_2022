@@ -13,9 +13,9 @@ import plotly.graph_objects as go
 import plotly.figure_factory as ff
 import geopandas as gd # pip install geopandas
 import googlemaps #pip install googlemaps
-import os
 import gmplot
 import ast
+import Save_and_Load_Tree
 #import Flask #pip install Flask
 github_link= 'https://github.com/GAVIN-GANLIN/Final_Project_SI_507_2022.git'
 
@@ -26,8 +26,8 @@ Yelp_key ='dmnWf3eh1fIcD3Tqf-mP1plm3MLHF2iE27BhYd3h4FbfXcFMczG5Oy99RXIa4xJ58IP-0
 API_HOST = 'https://api.yelp.com'
 SEARCH_PATH = '/v3/businesses/search'
 HEADERS = {'Authorization': 'Bearer %s' % Yelp_key}
-TERM = 'KFC'
-LOCATION = 'New York City, NY'
+#TERM = 'KFC'
+#LOCATION = 'New York City, NY'
 LIMIT = 50
 
 def get_Yelp_Data (api_host,search_path,headers,term,location,limit,offset):
@@ -66,7 +66,7 @@ def expo_Json(dat_list,filename):
     txt = open(filename,'w')
     txt.write(export_json)
     txt.close()
-def Expo_Large_Yelp_Data (offset):
+def Expo_Large_Yelp_Data (api_host,search_path,headers,term,location,limit,offset):
     """
     Since the default maximum limit for yelp search results is 50. In order to get
     more data, here we use 'offset' which can unrepeatly collect data severl times
@@ -83,7 +83,7 @@ def Expo_Large_Yelp_Data (offset):
 
     data = []
     for unit in range (0,offset,50):
-        json_test = get_Yelp_Data(API_HOST, SEARCH_PATH, HEADERS, TERM, LOCATION, LIMIT, offset)
+        json_test = get_Yelp_Data(api_host,search_path,headers,term,location,limit,offset)
         if json_test.status_code == 200:
            data += json_test.json()['businesses']
         elif json_test.status_code == 400:
@@ -113,7 +113,7 @@ Google_Map_API_Key = 'AIzaSyCMskEulSJi2dVdagZIVzl_5h7LHFmiTWQ'
 
 GMAP = googlemaps.Client(key=Google_Map_API_Key)
 Geocode_Host_Path = 'https://maps.googleapis.com/maps/api/geocode/json?'
-#test = gmap.geocode('New York')
+
 def get_Lat_Long_Paras(key,city):
     """
     This is to get the google search keywords and city user prefer
@@ -297,199 +297,41 @@ class Location(object):
 # treeListTest = [Location(dict = txtJson[i]) for i in range(len(txtJson))]
 #---------------------------------------------------------------------------
 
-#####################################################Tree Set up########################################################
-def Classfy_By_Price(list_Of_locations):
-    """"
-    classfy the raw data into four groups by price level
-    Parameters
-    -----------
-    list_Of_locations which is raw data from by caching
-
-    Returns
-    -----------
-    List sored by price
-    """
-    List_One_Price =[]
-    List_Two_Price =[]
-    List_Three_Price = []
-    List_None_Price = []
-    for i in range(len(list_Of_locations)):
-        if list_Of_locations[i].price == None:
-           List_None_Price.append(list_Of_locations[i])
-        if list_Of_locations[i].price == "$":
-            List_One_Price.append(list_Of_locations[i])
-        elif list_Of_locations[i].price == "$$":
-            List_Two_Price.append(list_Of_locations[i])
-        else:
-            List_Three_Price.append(list_Of_locations[i])
-    Classfied_List =[List_None_Price,List_One_Price,List_Two_Price,List_Three_Price]
-    return Classfied_List
-
-def Classfy_By_Rating (list_Of_locations):
-    """"
-    classfy the yelp searched data in to four different groups by rating levels
-    Parameters
-    -----------
-    list_Of_locations which is raw data from by caching
-
-    Returns
-    -----------
-    List sored by customer rating
-    """
-    List_One_Rating =[]
-    List_Two_Rating =[]
-    List_Three_Rating = []
-    List_Four_Rating = []
-    for i in range(len(list_Of_locations)):
-        if float(list_Of_locations[i].rating) <= 2:
-            List_One_Rating.append(list_Of_locations[i])
-        elif float(list_Of_locations[i].rating) > 2 and float(list_Of_locations[i].rating) <=3:
-            List_Two_Rating.append(list_Of_locations[i])
-        elif float(list_Of_locations[i].rating) >3 and float(list_Of_locations[i].rating) <=4:
-            List_Three_Rating.append(list_Of_locations[i])
-        else:
-            List_Four_Rating.append(list_Of_locations[i])
-    Classfied_List =[List_One_Rating,List_Two_Rating,List_Three_Rating,List_Four_Rating]
-    return Classfied_List
-def Trans_Yelp_Data_to_Tree(key,search_list):
-    """"
-    translate the raw data [list] in to the tree strucutre for further save and load
-    Parameters
-    -----------
-    key : the usered typed keywords
-    search_list: raw data stored in a list
-
-    Returns
-    -----------
-    Designed tree
-    the tree type is list
-                                ------------None----------------- *  --------$$--------------------- * -------------$$--------------- * -----------------$$$------------
-    unit tree structure:['key',[[[[0,2]],[(2,3]],[(3,4]],[(4,5]]]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]]]]]
-    """
-    Stored_Tree_unit = []
-    Stored_Tree_unit.append(key)
-    Store_search_price_list=[]
-    Classfied_Price = Classfy_By_Price(search_list)
-    for i in range(len(Classfied_Price)):
-        Classfied_Rating = Classfy_By_Rating(Classfied_Price[i])
-        Store_search_rating_list = []
-        for m in range(len(Classfied_Rating)):
-               Readable_Locations = []
-               for k in range(len(Classfied_Rating[m])):
-                      Readable_Locations.append(Classfied_Rating[m][k].get_print_str())
-               Store_search_rating_list.append(Readable_Locations)
-               #print(len(Store_search_rating_list))
-        Store_search_price_list.append(Store_search_rating_list)
-    Stored_Tree_unit.append(Store_search_price_list)
-    return Stored_Tree_unit
-
-
-
-
-
-def Save_Yelp_Data_Tree(treeList,treeFile):
-    """
-    Parameter
-    treeList
-    treeFile
-
-    Return
-    a json file storing tree
-    """
-    if isinstance(treeList[0],str):
-        print('Node1', file=treeFile)
-        print('keywords: ' + str(treeList[0]), file=treeFile)
-        print('Node2', file=treeFile)
-        print('Sorted by four price levels, None, $, $$ and $$$ or more', file=treeFile)
-        for i in range(len(treeList[1])):
-            print('Node3', file=treeFile)
-            print('Sorted by four rating intervals: [0,2],(2,3],(3,4] and (4,5]', file=treeFile)
-            for m in range(len(treeList[1][i])):
-                print('Leaf', file=treeFile)
-                print(treeList[1][i][m], file=treeFile)
-    else:
-        for n in range(len(treeList)):
-            print('Node1',file=treeFile)
-            print('keywords: '+ str(treeList[n][0]),file=treeFile)
-            print('Node2',file=treeFile)
-            print('Sorted by four price levels, None, $, $$ and $$$ or more', file=treeFile)
-            for i in range(len(treeList[n][1])):
-                  print('Node3', file=treeFile)
-                  print('Sorted by four rating intervals: [0,2],(2,3],(3,4] and (4,5]', file= treeFile)
-                  for m in range(len(treeList[n][1][i])):
-                         print('Leaf', file=treeFile)
-                         print(treeList[n][1][i][m],file=treeFile)
-
-def Load_Yelp_Data_Tree(Yelp_Tree_File):
-    """
-    Parameter
-    a json file storing the tree
-
-    Return:
-    list
-    """
-    Read_Yelp_Tree = Yelp_Tree_File.readline()
-    Read_yelp_Tree0= Read_Yelp_Tree.strip()
-    if Read_yelp_Tree0 == 'Leaf':
-       ReadLeaf = Yelp_Tree_File.readline()
-       ReadLeaf = ReadLeaf.strip()
-       return ast.literal_eval(ReadLeaf)
-    elif Read_yelp_Tree0 =='Node3' or Read_yelp_Tree0 =='Node2':
-        Read_Yelp_Tree = Yelp_Tree_File.readline()
-        Read_yelp_Tree2 = Read_Yelp_Tree.strip()
-        Read_yelp_Tree_TxT1 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT2 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT3 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT4 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        return [Read_yelp_Tree_TxT1,Read_yelp_Tree_TxT2,Read_yelp_Tree_TxT3,Read_yelp_Tree_TxT4]
-    elif Read_yelp_Tree0 =='Node1':
-        Read_Yelp_Tree = Yelp_Tree_File.readline()
-        Read_yelp_Tree2 = Read_Yelp_Tree.strip()
-        Read_Yelp_Tree = Yelp_Tree_File.readline()
-        Read_yelp_Tree3 = Read_Yelp_Tree.strip()
-        Read_Yelp_Tree = Yelp_Tree_File.readline()
-        Read_yelp_Tree4 = Read_Yelp_Tree.strip()
-        Read_yelp_Tree_TxT1 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT2 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT3 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-        Read_yelp_Tree_TxT4 = Load_Yelp_Data_Tree(Yelp_Tree_File)
-
-        return [Read_yelp_Tree2,[Read_yelp_Tree_TxT1,Read_yelp_Tree_TxT2,Read_yelp_Tree_TxT3,Read_yelp_Tree_TxT4]]
 #----------------------------------------------------
 #Test Code
 #
 
 #Test Code
-txtTest = open('test.json','r')
-txt = txtTest.read()
-txtJson = json.loads(txt)
-txtTest.close()
-print(type(txtJson))
-print(type(txtJson[0]))
+# txtTest = open('test.json','r')
+# txt = txtTest.read()
+# txtJson = json.loads(txt)
+# txtTest.close()
+# print(type(txtJson))
+# print(type(txtJson[0]))
 # print(txtJson[0].keys())
 # print(type(txtJson[0]['price']))
 # print(type('$'))
 # print(type(Location(dict=txtJson[0])))
-treeListTest = [Location(dict = txtJson[i]) for i in range(len(txtJson))]
-treeListTest = Trans_Yelp_Data_to_Tree('food',treeListTest)
-print(treeListTest)
+# treeListTest = [Location(dict = txtJson[i]) for i in range(len(txtJson))]
+# treeListTest = Trans_Yelp_Data_to_Tree('food',treeListTest)
+# print(treeListTest)
 # print (len(treeListTest))
 # print(treeListTest)
 # print(type(treeListTest))
 # print(len(treeListTest[1]))
-fileName_save = input("Please enter a file name: ")
-treeFile = open(fileName_save, 'w')
-Save_Yelp_Data_Tree(treeListTest,treeFile)
-treeFile = open('6.txt', 'r')
+# fileName_save = input("Please enter a file name: ")
+# treeFile = open(fileName_save, 'w')
+# Save_Yelp_Data_Tree(treeListTest,treeFile)
+# treeFile = open('6.txt', 'r')
 
 
-Tree = Load_Yelp_Data_Tree(treeFile)
-treeFile.close()
-print(Tree)
-print(len(Tree))
-print(type(Tree[1]))
-print(len(Tree[1][1]))
-print(Tree[1][0][0][0][0]['rating'])
+# Tree = Load_Yelp_Data_Tree(treeFile)
+# treeFile.close()
+# print(Tree)
+# print(len(Tree))
+# print(type(Tree[1]))
+# print(len(Tree[1][1]))
+# print(Tree[1][0][0][0][0]['rating'])
 # fileName_save = input("Please enter a file name: ")
 # treeFile = open(fileName_save, 'w')
 # Save_Yelp_Data_Tree(Tree,treeFile)
@@ -653,7 +495,7 @@ def plot_price_pie_chart(treeList):
                 elif treeList[1][i][m][k][0]['price'] == '$$$$':
                     info_list.append((float(4)))
                     key.append('Pricing level: $$$$')
-
+    print(key)
     print("Plotting")
     print('-' * 80)
     fig = go.Figure(data=[go.Pie(labels=key, values=info_list,title= treeList[0])])
@@ -690,6 +532,7 @@ def Print_average_economy_condition(treeList,Discovery_Code):
             Economy_list.append(float(ecnomy_data[1][0]))
     print(Economy_list)
     average_economy_list = sum(element for element in Economy_list)/len(Economy_list)
+    print(f'The average number is {average_economy_list}')
     print(average_economy_list)
     return average_economy_list
 
@@ -704,7 +547,10 @@ def Print_average_economy_condition(treeList,Discovery_Code):
 
 
 if __name__=="__main__":
+   print('')
+   print('')
    print("##############################welcome to use this program!#############################")
+   print('')
    print('')
    Poverty_list=[]
    Income_Condition_list=[]
@@ -714,21 +560,21 @@ if __name__=="__main__":
        if load_File:
            fileName_load= input('Please input the loaded file name: ')
            load_tree = open(fileName_load, 'r')
-           Trans_Data_into_tree = Load_Yelp_Data_Tree(load_tree)
+           Trans_Data_into_tree = Save_and_Load_Tree.Load_Yelp_Data_Tree(load_tree)
            city = Trans_Data_into_tree[0].split("in",1)[1]
            load_tree.close()
            print('-' * 80)
            print('-------------------------Data preparing----------------------')
        else:
-            key = input("Please input location you are interested in to Yelp: ")
-            city = input("Please narrow down the city you are interested in the USA: ")
+            key = input("Please input your interested location into Yelp Fusion: ")
+            city = input("Please narrow down to the city you interested in the USA: ")
             offset = input('Please specify how many results you want to get (should be multiply of 50 and no exceeding 1000: ')
             print('-'* 80)
             print('-------------------------Data preparing----------------------')
-            load_data = Expo_Large_Yelp_Data(int(offset))
+            load_data = Expo_Large_Yelp_Data(API_HOST,SEARCH_PATH,HEADERS,key,city,LIMIT,int(offset))
             keywords = key + ' in ' + city
             Transferred_data = Trans_data_into_Location(load_data)
-            Trans_Data_into_tree = Trans_Yelp_Data_to_Tree(keywords,Transferred_data)
+            Trans_Data_into_tree = Save_and_Load_Tree.Trans_Yelp_Data_to_Tree(keywords,Transferred_data)
             save_data_to_json = yes('Do you want to store the raw results into json file? ')
             if save_data_to_json:
                 fileName_json = input("Please give the json file a name: ")
@@ -737,7 +583,7 @@ if __name__=="__main__":
        if save_data_tree:
            fileName_tree = input('Please give the tree file a name ')
            treeFile = open(fileName_tree, 'w')
-           Save_Yelp_Data_Tree(Trans_Data_into_tree,treeFile)
+           Save_and_Load_Tree.Save_Yelp_Data_Tree(Trans_Data_into_tree,treeFile)
            treeFile.close()
        print('')
        print("########################Now let's do data presentation#################################")
