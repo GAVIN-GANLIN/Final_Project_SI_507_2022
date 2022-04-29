@@ -736,7 +736,7 @@ if __name__=="__main__":
        save_data_tree = yes('Do you want to save the data into tree? ')
        if save_data_tree:
            fileName_tree = input('Please give the tree file a name ')
-           treeFile = open(fileName_save, 'w')
+           treeFile = open(fileName_tree, 'w')
            Save_Yelp_Data_Tree(Trans_Data_into_tree,treeFile)
            treeFile.close()
        print('')
