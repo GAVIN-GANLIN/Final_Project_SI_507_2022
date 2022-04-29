@@ -714,9 +714,9 @@ if __name__=="__main__":
        if load_File:
            fileName_load= input('Please input the loaded file name: ')
            load_tree = open(fileName_load, 'r')
-           load_tree_dict = json.dumps(load_tree)
-           Trans_Yelp_Data_into_tree = Load_Yelp_Data_Tree(load_tree_dict)
-           treeFile.close()
+           Trans_Data_into_tree = Load_Yelp_Data_Tree(load_tree)
+           city = Trans_Data_into_tree[0].split("in",1)[1]
+           load_tree.close()
            print('-' * 80)
            print('-------------------------Data preparing----------------------')
        else:
