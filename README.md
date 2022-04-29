@@ -62,7 +62,8 @@ Census_Api_Code = <your key>
   
   ![image](https://user-images.githubusercontent.com/58121031/166068492-242df513-3bd6-4c48-8843-bf05337349a0.png)
 Below is the illustration of the tree in a list style:
-        ------------None----------------- *  -------------$---------------- * -------------$$--------------- * -----------------$$$------------
-['key',[[[[0,2]],[(2,3]],[(3,4]],[(4,5]]]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]],[[[0,2]],[(2,3]],[(3,4]],[(4,5]]]]]
+  
+![image](https://user-images.githubusercontent.com/58121031/166069151-4601caf4-034d-45b3-8943-e3597f5e11e3.png)
+  
 $, $$, $$$ and None mean the price level get from the yelp fusion
 [0,2],(2,3],(3,4],(4,5] are four different groups for rating values [0,5] got from Yelp API.
