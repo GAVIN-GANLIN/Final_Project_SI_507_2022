@@ -573,7 +573,7 @@ def input_user_display_choice():
         print('4. Distribution in the map')
         print('5. Average Poverty level in selected regions')
         print('6. Average Income level in selected regions')
-        display_choice = input(f'Please enter a choice number from 1 to 6 or "back" to chose a new category: ').lower()
+        display_choice = input(f'Please enter a choice number from 1 to 6 or "back" to choose a new category: ').lower()
         print('-' * 80)
         if display_choice == "back":
             return display_choice
