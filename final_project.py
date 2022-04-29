@@ -621,7 +621,7 @@ if __name__=="__main__":
            break
    print('Below is average number of people under poverty in selected areas (return [] if you did not play 5th data display')
    print(Poverty_list)
-   print('Below is average income under poverty in selected areas (return [] if you did not play 5th data display')
+   print('Below is average year income in selected areas (return [] if you did not play 5th data display')
    print(Income_Condition_list)
    print('#############################Thank you for using! See you again!#########################')
 
