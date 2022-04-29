@@ -25,38 +25,38 @@ First plot the map of the area we interest (NYC or Chicago), and then use heatma
 
 Installtion of python packages
 
-$pip install plotly
-$pip install googlemaps
-$pip install gmplot
+$pip install plotly <br />
+$pip install googlemaps <br />
+$pip install gmplot <br />
 $pip install geopandas
-
+<br />
 Import package that installed already while is not frequently used
-
+<br />
 import ast
-
+<br />
 API Application
-
-Yelp Fusion (Free)
-https://www.yelp.com/developers/documentation/v3/authentication
-Follow the instructions above, it is free and you simply need to create app and then you can get your personal api key. However, they have limit on daliy search amount threshold
-Google Map Api (Not free!!!!!)
-https://cloud.google.com/docs/authentication/api-keys
-You need to first login in your gamil account, then you need to create your own project. One thing need to notice is that you must linke your project to a billing account and give your personal api key restrictions so that your api key can be successfully activated.
-Census Api (Free)
-https://geo.fcc.gov/api/census/ (no need for key and we need tract number(in block_fips) from this website,the tract number will help us to query the data from census/acs data.
-https://www.census.gov/data/developers/guidance/api-user-guide.What_is_the_API.html
+<br />
+Yelp Fusion (Free)<br />
+https://www.yelp.com/developers/documentation/v3/authentication <br />
+Follow the instructions above, it is free and you simply need to create app and then you can get your personal api key. However, they have limit on daliy search amount threshold <br />
+Google Map Api (Not free!!!!!) <br />
+https://cloud.google.com/docs/authentication/api-keys <br />
+You need to first login in your gamil account, then you need to create your own project. One thing need to notice is that you must linke your project to a billing account and give your personal api key restrictions so that your api key can be successfully activated.<br />
+Census Api (Free) <br />
+https://geo.fcc.gov/api/census/ (no need for key and we need tract number(in block_fips) from this website,the tract number will help us to query the data from census/acs data. <br />
+https://www.census.gov/data/developers/guidance/api-user-guide.What_is_the_API.html <br />
 Read the contents in the link above. scroll down to bottom and click the 'Request a Key' button on the left of the webpage.
 
 Once you finish the set up and successflly get all your new personal api keys, please replace the three key variables in the code (see below) with your own keys. 
 
-Yelp_key = <your key>
-Google_Map_API_Key = <your key>
-Census_Api_Code = <your key>
+Yelp_key = <your key> <br />
+Google_Map_API_Key = <your key> <br />
+Census_Api_Code = <your key> <br />
 
 ## Interaction with the code
-  As for Yelp Fusion. three parameters you need to input: catgories of location you want to search (e.g. Museum); narrow down the search region to a city(e.g. New York); offset value which means how many results you want to get(should be multiple of 50 and not exceed 1000)
-  As for Google Map Api, it needs the first two parameters required for Yelp Fusion, and the program will deliver the two parameters to Google map api automatically once you type them for Yelp Fusion.
-  As for Census, you first need to give the latitude and longitude and year(default 20202) information to get_Local_TractNum(Tract_Home_Url,Lat,Lon,Year) function to get corresponding tract number in https://geo.fcc.gov/api/census/  and then use the number to get information you want in the https://www.census.gov/data/developers/data-sets/acs-5year.html. Also, you need the code for the economy data you are interested, you can see detalied code tables here:https://api.census.gov/data/2020/acs/acs5/variables.html
+  As for Yelp Fusion. three parameters you need to input: catgories of location you want to search (e.g. Museum); narrow down the search region to a city(e.g. New York); offset value which means how many results you want to get(should be multiple of 50 and not exceed 1000)<br />
+  As for Google Map Api, it needs the first two parameters required for Yelp Fusion, and the program will deliver the two parameters to Google map api automatically once you type them for Yelp Fusion.<br />
+  As for Census, you first need to give the latitude and longitude and year(default 20202) information to get_Local_TractNum(Tract_Home_Url,Lat,Lon,Year) function to get corresponding tract number in https://geo.fcc.gov/api/census/  and then use the number to get information you want in the https://www.census.gov/data/developers/data-sets/acs-5year.html. Also, you need the code for the economy data you are interested, you can see detalied code tables here:https://api.census.gov/data/2020/acs/acs5/variables.html<br />
   
 ## Data Structure: Tree
   
